@@ -1,0 +1,13 @@
+{
+  "name": "Command Vault",
+  "short_name": "Command Vault",
+  "description": "Depozit personal de comenzi și scripturi pentru muncă de tehnician IT / system administrator.",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ],
+  "theme_color": "#0E6E78",
+  "background_color": "#0E1417",
+  "display": "standalone",
+  "start_url": "/"
+}
