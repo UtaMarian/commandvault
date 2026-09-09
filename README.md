@@ -72,3 +72,50 @@ docs/plan.html   Planul de construcție (publicat ca artifact)
 ## Notă despre `.env`
 
 `.env` conține `DATABASE_URL`-ul real către Neon și e în `.gitignore` — **nu-l comite**. Când urci proiectul pe git, `.env.example` rămâne ca referință pentru oricine clonează repo-ul.
+
+## Deploy pe Render
+
+Două servicii separate, care par un singur domeniu din perspectiva browserului (rewrite `/api/*` -> API-ul real). Asta contează: dacă ar fi două domenii diferite, cookie-ul de sesiune (SameSite=Lax) n-ar mai trece la cererile către API.
+
+### Varianta rapidă — Blueprint
+
+Repo-ul are deja [render.yaml](render.yaml) la rădăcină, cu ambele servicii predefinite.
+
+1. [dashboard.render.com](https://dashboard.render.com) → **New +** → **Blueprint**
+2. Conectează contul GitHub (dacă nu e deja) și alege repo-ul `UtaMarian/commandvault`
+3. Render citește `render.yaml` și îți arată cele două servicii (`commandvault-api`, `commandvault-web`) — apasă **Apply**
+4. Singura valoare pe care trebuie s-o completezi manual: `DATABASE_URL` la serviciul `commandvault-api` (connection string-ul de Neon, exact cel din `.env` local). `SESSION_SECRET` se generează automat.
+5. Așteaptă ambele deploy-uri (2-4 minute prima dată) și deschide URL-ul lui `commandvault-web`
+
+Dacă Render arată o eroare de validare pe `render.yaml` (schema mai evoluează din când în când), sari la varianta manuală de mai jos — pașii sunt identici, doar completați din formulare în loc de fișier.
+
+### Varianta manuală (din dashboard)
+
+**1. API — New + → Web Service**
+- Repo: `UtaMarian/commandvault` · Branch: `main` · Root Directory: *(gol)*
+- Runtime: **Node**
+- Build Command: `corepack enable && corepack prepare pnpm@10.29.1 --activate && pnpm install --frozen-lockfile`
+- Start Command: `pnpm --filter @command-vault/api run start`
+- Health Check Path: `/api/health`
+- Environment:
+  - `DATABASE_URL` = connection string-ul de Neon (același din `.env`)
+  - `SESSION_SECRET` = un șir aleator lung (**nu** refolosi valoarea de test din `.env` local)
+  - `NODE_ENV` = `production`
+  - `WEB_ORIGIN` = *(o completezi la pasul 3, după ce știi URL-ul site-ului static)*
+- Create Web Service → notează URL-ul (`https://commandvault-api-XXXX.onrender.com` sau numele ales)
+
+**2. Frontend — New + → Static Site**
+- Același repo, Root Directory: *(gol)*
+- Build Command: `corepack enable && corepack prepare pnpm@10.29.1 --activate && pnpm install --frozen-lockfile && pnpm --filter @command-vault/web run build`
+- Publish Directory: `apps/web/dist`
+- Create Static Site → notează URL-ul
+
+**3. Redirects/Rewrites** (pe site-ul static, tab-ul *Redirects/Rewrites*), în ordinea asta:
+1. Source `/api/*` → Destination `https://<url-ul-real-al-API-ului>/api/*` → tip **Rewrite**
+2. Source `/*` → Destination `/index.html` → tip **Rewrite** (altfel un refresh pe `/entries` dă 404 — e o aplicație cu rutare client-side)
+
+**4. Închide bucla**: intră înapoi la serviciul API → *Environment* → setează `WEB_ORIGIN` la URL-ul real al site-ului static → *Save* (redeployează automat).
+
+Baza de date rămâne aceeași instanță Neon folosită și local — e deja migrată și populată cu seed-ul, deci n-ai nimic de rulat suplimentar. Dacă preferi o bază separată pentru producție, creează-o în Neon, pune connection string-ul ei ca `DATABASE_URL` pe serviciul Render, apoi rulează o singură dată local `DATABASE_URL="..." pnpm run db:migrate` (și opțional `db:seed`) cu acel connection string.
+
+**De reținut**: planul Free de pe Render adoarme serviciile după ~15 minute de inactivitate — prima cerere după o pauză poate dura 30-60s (serviciul pornește din nou). Normal pentru un instrument personal; dacă devine deranjant, singura soluție e un plan plătit.

@@ -1,0 +1,44 @@
+## Blueprint Render pentru Command Vault — vezi README.md "Deploy pe Render" pentru
+## explicația fiecărui pas. Poate fi folosit din Render cu "New +" -> "Blueprint",
+## sau fiecare serviciu poate fi creat manual din dashboard cu aceleași valori.
+##
+## Cele două servicii comunică prin rewrite-ul din `routes` de mai jos (/api/* pe
+## site-ul static -> API-ul real) — asta le face să pară un singur domeniu din
+## perspectiva browserului, ceea ce evită complet problemele de CORS și de cookie
+## cross-site pentru sesiunea de autentificare.
+
+services:
+  - type: web
+    name: commandvault-api
+    runtime: node
+    plan: free
+    region: frankfurt
+    branch: main
+    buildCommand: corepack enable && corepack prepare pnpm@10.29.1 --activate && pnpm install --frozen-lockfile
+    startCommand: pnpm --filter @command-vault/api run start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: WEB_ORIGIN
+        value: https://commandvault-web.onrender.com
+
+  - type: web
+    name: commandvault-web
+    runtime: static
+    plan: free
+    region: frankfurt
+    branch: main
+    buildCommand: corepack enable && corepack prepare pnpm@10.29.1 --activate && pnpm install --frozen-lockfile && pnpm --filter @command-vault/web run build
+    staticPublishPath: apps/web/dist
+    routes:
+      - type: rewrite
+        source: /api/*
+        destination: https://commandvault-api.onrender.com/api/*
+      - type: rewrite
+        source: /*
+        destination: /index.html
