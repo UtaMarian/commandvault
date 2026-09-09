@@ -30,8 +30,6 @@ services:
   - type: web
     name: commandvault-web
     runtime: static
-    plan: free
-    region: frankfurt
     branch: main
     buildCommand: corepack enable && corepack prepare pnpm@10.29.1 --activate && pnpm install --frozen-lockfile && pnpm --filter @command-vault/web run build
     staticPublishPath: apps/web/dist
