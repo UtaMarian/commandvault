@@ -1,0 +1,16 @@
+node_modules/
+dist/
+build/
+.env
+.env.*
+!.env.example
+*.local
+.DS_Store
+Thumbs.db
+*.tsbuildinfo
+coverage/
+.vite/
+
+# playwright/browser download caches, if anyone runs a local screenshot check
+test-results/
+playwright-report/

@@ -1,0 +1,671 @@
+<title>Command Vault</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  --ground:#F4F6F7; --surface:#FFFFFF; --surface-2:#EAEEF0;
+  --ink:#14181C; --ink-2:#586570; --ink-3:#8A959E;
+  --line:#DBE2E6; --line-strong:#BFCAD1;
+  --accent:#0E6E78; --accent-soft:#DFEFF1;
+  --signal:#A85708; --signal-soft:#F8EBDA;
+  --danger:#AC2318; --danger-soft:#F8E7E5;
+  --ok:#2A7343; --ok-soft:#E1F0E6;
+  --code-bg:#101A1E; --code-ink:#D5E2E6; --code-dim:#7C9098; --code-line:#22333A;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#0E1417; --surface:#151D21; --surface-2:#1B252A;
+    --ink:#E3EAED; --ink-2:#9CA9B1; --ink-3:#6D7C84;
+    --line:#25323A; --line-strong:#37474F;
+    --accent:#4FC1CC; --accent-soft:#11333A;
+    --signal:#DE9A52; --signal-soft:#31240F;
+    --danger:#E88176; --danger-soft:#391A17;
+    --ok:#67C085; --ok-soft:#13301E;
+    --code-bg:#080E11; --code-ink:#CEDCE0; --code-dim:#6B8088; --code-line:#1B282E;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0E1417; --surface:#151D21; --surface-2:#1B252A;
+  --ink:#E3EAED; --ink-2:#9CA9B1; --ink-3:#6D7C84;
+  --line:#25323A; --line-strong:#37474F;
+  --accent:#4FC1CC; --accent-soft:#11333A;
+  --signal:#DE9A52; --signal-soft:#31240F;
+  --danger:#E88176; --danger-soft:#391A17;
+  --ok:#67C085; --ok-soft:#13301E;
+  --code-bg:#080E11; --code-ink:#CEDCE0; --code-dim:#6B8088; --code-line:#1B282E;
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--ground); color:var(--ink);
+  font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size:16px; line-height:1.62; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1080px; margin:0 auto; padding:0 28px}
+.prose{max-width:66ch}
+h1,h2,h3{font-family:Archivo,"IBM Plex Sans",sans-serif; text-wrap:balance; margin:0}
+h1{font-size:clamp(2.1rem,5vw,3.1rem); font-weight:700; letter-spacing:-.028em; line-height:1.06}
+h2{font-size:clamp(1.35rem,2.6vw,1.72rem); font-weight:700; letter-spacing:-.02em; line-height:1.18}
+h3{font-size:1.02rem; font-weight:600; letter-spacing:-.008em}
+p{margin:0}
+a{color:var(--accent)}
+code,kbd,pre{font-family:"IBM Plex Mono",ui-monospace,Consolas,monospace}
+:focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:3px}
+
+.eyebrow{
+  font-family:"IBM Plex Mono",monospace; font-size:.7rem; font-weight:500;
+  letter-spacing:.16em; text-transform:uppercase; color:var(--ink-3);
+}
+
+header.top{border-bottom:1px solid var(--line); background:var(--surface)}
+.top-inner{padding:64px 0 42px; display:flex; flex-direction:column; gap:22px}
+.top .lede{font-size:1.12rem; color:var(--ink-2); max-width:60ch}
+.chips{display:flex; flex-wrap:wrap; gap:8px}
+.chip{
+  display:inline-flex; align-items:center; gap:7px; padding:5px 11px 5px 9px;
+  border:1px solid var(--line-strong); border-radius:999px; background:var(--ground);
+  font-family:"IBM Plex Mono",monospace; font-size:.74rem; color:var(--ink-2);
+}
+.chip b{color:var(--ink); font-weight:500}
+.dot{width:6px; height:6px; border-radius:50%; background:var(--accent); flex:none}
+
+section{padding:56px 0; border-bottom:1px solid var(--line)}
+.sec-head{display:flex; flex-direction:column; gap:9px; margin-bottom:28px}
+.sec-head p{color:var(--ink-2); max-width:62ch}
+.stack{display:flex; flex-direction:column; gap:18px}
+.stack-lg{display:flex; flex-direction:column; gap:32px}
+
+.jobs{display:grid; grid-template-columns:repeat(auto-fit,minmax(232px,1fr)); gap:1px; background:var(--line); border:1px solid var(--line)}
+.job{background:var(--surface); padding:20px 18px; display:flex; flex-direction:column; gap:7px}
+.job .t{font-weight:600; font-size:.94rem}
+.job .d{font-size:.87rem; color:var(--ink-2); line-height:1.5}
+.job .m{font-family:"IBM Plex Mono",monospace; font-size:.72rem; color:var(--accent)}
+
+.rows{border-top:1px solid var(--line)}
+.row{
+  display:grid; grid-template-columns:150px 210px 1fr; gap:20px;
+  padding:15px 2px; border-bottom:1px solid var(--line); align-items:baseline;
+}
+.row .role{font-family:"IBM Plex Mono",monospace; font-size:.74rem; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3)}
+.row .pick{font-weight:600; font-size:.95rem}
+.row .why{color:var(--ink-2); font-size:.9rem; line-height:1.55}
+@media (max-width:760px){ .row{grid-template-columns:1fr; gap:5px; padding:16px 2px} }
+
+pre{
+  margin:0; background:var(--code-bg); color:var(--code-ink);
+  padding:20px 22px; overflow-x:auto; font-size:.815rem; line-height:1.68;
+  border-radius:6px; border:1px solid var(--code-line);
+}
+pre .c{color:var(--code-dim)}
+pre .k{color:#7FD1DC}
+pre .s{color:#E3B06B}
+.codecap{
+  font-family:"IBM Plex Mono",monospace; font-size:.7rem; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--ink-3); margin-bottom:8px;
+}
+
+.flow{display:grid; grid-template-columns:1fr 1fr; gap:26px; align-items:start}
+@media (max-width:860px){ .flow{grid-template-columns:1fr} }
+.flow-text{display:flex; flex-direction:column; gap:10px}
+.steps{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:9px}
+.steps li{display:flex; gap:11px; font-size:.9rem; color:var(--ink-2); line-height:1.5}
+.steps .n{
+  flex:none; width:19px; height:19px; margin-top:2px; border-radius:3px;
+  background:var(--accent-soft); color:var(--accent); font-family:"IBM Plex Mono",monospace;
+  font-size:.68rem; display:grid; place-items:center; font-weight:500;
+}
+kbd{
+  border:1px solid var(--line-strong); border-bottom-width:2px; border-radius:4px;
+  padding:1px 5px; font-size:.76rem; background:var(--surface); color:var(--ink);
+}
+
+.filters{display:flex; flex-wrap:wrap; gap:7px}
+.f{
+  font-family:"IBM Plex Mono",monospace; font-size:.76rem; padding:5px 10px;
+  border:1px solid var(--line-strong); border-radius:5px; background:var(--surface); color:var(--ink-2);
+}
+.f b{color:var(--ink); font-weight:500}
+
+.wire{
+  border:1px solid var(--line-strong); background:var(--surface-2);
+  padding:14px; display:flex; flex-direction:column; gap:12px; border-radius:8px;
+}
+.wire-bar{display:flex; align-items:center; gap:8px; padding-bottom:11px; border-bottom:1px solid var(--line-strong)}
+.wire-bar .t{font-family:"IBM Plex Mono",monospace; font-size:.72rem; color:var(--ink-2)}
+.tiles{display:grid; grid-template-columns:repeat(4,1fr); gap:10px}
+.tile{
+  background:var(--surface); border:1px solid var(--line); border-radius:6px;
+  padding:12px 13px; display:flex; flex-direction:column; gap:3px; min-height:74px;
+}
+.tile .lab{font-family:"IBM Plex Mono",monospace; font-size:.63rem; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3)}
+.tile .val{font-family:Archivo,sans-serif; font-weight:700; font-size:1.5rem; letter-spacing:-.02em; font-variant-numeric:tabular-nums; color:var(--ink-3)}
+.tile .sub{font-size:.72rem; color:var(--ink-2)}
+.tile.warn{border-color:var(--signal); background:var(--signal-soft)}
+.tile.warn .val{color:var(--signal)}
+.panels{display:grid; grid-template-columns:1.35fr 1fr; gap:10px}
+@media (max-width:760px){ .tiles{grid-template-columns:repeat(2,1fr)} .panels{grid-template-columns:1fr} }
+.panel{
+  background:var(--surface); border:1px dashed var(--line-strong); border-radius:6px;
+  padding:13px 14px; display:flex; flex-direction:column; gap:9px; min-height:120px;
+}
+.panel .h{font-size:.8rem; font-weight:600}
+.panel .ph{
+  font-family:"IBM Plex Mono",monospace; font-size:.7rem; color:var(--ink-3);
+  display:flex; flex-direction:column; gap:6px;
+}
+.ph .line{display:flex; justify-content:space-between; gap:12px; align-items:center}
+.ph .track{flex:1; min-width:40px; height:7px; background:var(--surface-2); border:1px solid var(--line); border-radius:2px}
+.wire-note{font-size:.78rem; color:var(--ink-3); font-style:italic}
+
+.metrics{display:flex; flex-direction:column; border-top:1px solid var(--line)}
+.metric{display:grid; grid-template-columns:1fr 1.5fr; gap:18px; padding:12px 2px; border-bottom:1px solid var(--line); font-size:.89rem}
+.metric .m{font-weight:600}
+.metric .q{color:var(--ink-2)}
+@media (max-width:700px){ .metric{grid-template-columns:1fr; gap:3px} }
+
+.phases{display:flex; flex-direction:column; border-top:1px solid var(--line)}
+.phase{
+  display:grid; grid-template-columns:64px 1fr 250px; gap:24px;
+  padding:22px 2px; border-bottom:1px solid var(--line);
+}
+.phase .idx{
+  font-family:"IBM Plex Mono",monospace; font-size:.78rem; color:var(--accent);
+  border-left:2px solid var(--accent); padding-left:11px; line-height:1.35;
+}
+.phase .idx span{display:block; color:var(--ink-3); font-size:.7rem}
+.phase .body{display:flex; flex-direction:column; gap:9px}
+.phase .body p{font-size:.9rem; color:var(--ink-2)}
+.deliv{
+  background:var(--ok-soft); border:1px solid var(--ok); border-radius:5px;
+  padding:11px 13px; font-size:.83rem; line-height:1.5; color:var(--ink); align-self:start;
+}
+.deliv b{display:block; font-family:"IBM Plex Mono",monospace; font-size:.66rem; letter-spacing:.09em; text-transform:uppercase; color:var(--ok); margin-bottom:4px; font-weight:500}
+@media (max-width:860px){
+  .phase{grid-template-columns:1fr; gap:12px}
+  .phase .idx{border-left:0; border-top:2px solid var(--accent); padding:8px 0 0}
+  .phase .idx span{display:inline; margin-left:8px}
+}
+
+.guards{display:grid; grid-template-columns:repeat(auto-fit,minmax(255px,1fr)); gap:14px}
+.guard{border:1px solid var(--line); background:var(--surface); border-radius:6px; padding:16px 17px; display:flex; flex-direction:column; gap:8px}
+.guard.crit{border-left:3px solid var(--danger)}
+.guard.warn{border-left:3px solid var(--signal)}
+.guard.info{border-left:3px solid var(--accent)}
+.guard h3{font-size:.93rem}
+.guard p{font-size:.86rem; color:var(--ink-2); line-height:1.55}
+.guard code{font-size:.78rem; background:var(--surface-2); padding:1px 4px; border-radius:3px}
+
+.later{display:flex; flex-direction:column; border-top:1px solid var(--line)}
+.later-row{display:grid; grid-template-columns:1fr 1.4fr; gap:18px; padding:12px 2px; border-bottom:1px solid var(--line); font-size:.89rem}
+.later-row .w{font-weight:600}
+.later-row .r{color:var(--ink-2)}
+@media (max-width:700px){ .later-row{grid-template-columns:1fr; gap:3px} }
+
+.note{font-size:.93rem; color:var(--ink-2)}
+.note b{color:var(--ink)}
+
+footer{padding:38px 0 60px; color:var(--ink-3); font-size:.83rem}
+</style>
+
+<header class="top">
+  <div class="wrap top-inner">
+    <div class="eyebrow">Plan de construcție &middot; v1</div>
+    <h1>Command Vault</h1>
+    <p class="lede">Un depozit personal pentru comenzile și scripturile din munca de tehnician IT: le scrii o dată, le explici o dată, apoi le găsești în trei secunde și le ai în clipboard din două apăsări — de pe orice mașină.</p>
+    <div class="chips">
+      <span class="chip"><i class="dot"></i>Web app <b>React + TypeScript</b></span>
+      <span class="chip"><i class="dot"></i>API <b>Fastify + Drizzle</b></span>
+      <span class="chip"><i class="dot"></i>Date <b>PostgreSQL 16</b></span>
+      <span class="chip"><i class="dot"></i>Rulare <b>self-hosted, acces de oriunde</b></span>
+      <span class="chip"><i class="dot"></i>Efort <b>~8–11 zile de lucru</b></span>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap stack">
+    <div class="sec-head prose">
+      <div class="eyebrow">Problema</div>
+      <h2>Ce trebuie să facă aplicația, concret</h2>
+      <p>Nu e un „notepad mai frumos". Fiecare decizie de mai jos se măsoară în secundele pe care le pierzi acum căutând prin OneNote, prin istoricul de PowerShell sau prin memorie.</p>
+    </div>
+    <div class="jobs">
+      <div class="job">
+        <div class="t">Salvez în 10 secunde</div>
+        <div class="d">Dacă adăugarea unei comenzi durează mai mult decât rescrierea ei, aplicația moare în două săptămâni. Un singur câmp obligatoriu, restul completabil mai târziu.</div>
+        <div class="m">Ctrl+N → paste → Enter</div>
+      </div>
+      <div class="job">
+        <div class="t">Găsesc în 3 secunde</div>
+        <div class="d">Căutare peste titlu, comandă, explicație și taguri, cu rezultate pe măsură ce scrii. Fără să deschid meniuri sau foldere.</div>
+        <div class="m">Ctrl+K → „dns" → Enter</div>
+      </div>
+      <div class="job">
+        <div class="t">Copiez fără să greșesc</div>
+        <div class="d">Comenzile cu parametri cer valorile într-un formular și copiază varianta completată — nu șablonul cu <code>{{server}}</code> în el.</div>
+        <div class="m">Copiază completat</div>
+      </div>
+      <div class="job">
+        <div class="t">Îmi amintesc de ce</div>
+        <div class="d">Explicația detaliată e parte din intrare, nu un extra: ce face, când o folosesc, ce strică dacă greșesc, cum dau înapoi.</div>
+        <div class="m">Descriere + rollback</div>
+      </div>
+      <div class="job">
+        <div class="t">Țin scripturile versionate</div>
+        <div class="d">Un script se modifică în timp. Păstrez versiunile, văd ce s-a schimbat, descarc fișierul cu extensia corectă.</div>
+        <div class="m">v3 · descarcă .ps1</div>
+      </div>
+      <div class="job">
+        <div class="t">Văd unde stau prost</div>
+        <div class="d">Dashboard-ul arată ce domenii sunt slab acoperite și ce intrări au rămas fără explicație sau neatinse de luni bune.</div>
+        <div class="m">Sumar + statistici</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap stack">
+    <div class="sec-head prose">
+      <div class="eyebrow">Tehnologii</div>
+      <h2>Stack-ul și motivul fiecărei alegeri</h2>
+      <p>Totul în TypeScript, ca să nu comuți între două limbaje. Nimic exotic — fiecare piesă are documentație bună și o poți întreține singur peste doi ani.</p>
+    </div>
+    <div class="rows">
+      <div class="row"><div class="role">Frontend</div><div class="pick">React + Vite + TypeScript</div><div class="why">Build instant, ecosistem mare. Rutare cu TanStack Router, date cu TanStack Query — cache și refetch fără cod scris de mână.</div></div>
+      <div class="row"><div class="role">UI</div><div class="pick">Tailwind + shadcn/ui</div><div class="why">Componentele se copiază în proiect, nu se ascund într-un pachet — le modifici direct. Dialog, command palette și tabel deja accesibile.</div></div>
+      <div class="row"><div class="role">Editor cod</div><div class="pick">CodeMirror 6</div><div class="why">Evidențiere pentru PowerShell, bash, SQL; mult mai ușor de integrat decât Monaco. Același component, read-only la vizualizare și editabil în formular.</div></div>
+      <div class="row"><div class="role">API</div><div class="pick">Fastify + Zod</div><div class="why">Rapid, tipizat, cu validare din aceleași scheme pe care le folosește și frontend-ul (pachetul <code>shared</code>).</div></div>
+      <div class="row"><div class="role">Acces la date</div><div class="pick">Drizzle ORM</div><div class="why">Rămâi aproape de SQL — esențial, pentru că partea de căutare și dashboard-ul sunt SQL curat, nu magie de ORM.</div></div>
+      <div class="row"><div class="role">Bază de date</div><div class="pick">PostgreSQL 16</div><div class="why">Full-text search nativ (<code>tsvector</code> + GIN) și potrivire aproximativă (<code>pg_trgm</code>). Nu-ți trebuie Elasticsearch pentru câteva mii de intrări.</div></div>
+      <div class="row"><div class="role">Autentificare</div><div class="pick">Sesiune pe cookie + argon2</div><div class="why">Un singur utilizator la început, dar cu <code>owner_id</code> deja în schemă, ca să poți invita colegi fără migrare dureroasă.</div></div>
+      <div class="row"><div class="role">Găzduire</div><div class="pick">Docker Compose + Caddy</div><div class="why">Trei containere pe un VPS sau pe o mașină din Proxmox. Caddy ia certificatul TLS automat. Ești sysadmin — asta e partea ușoară.</div></div>
+      <div class="row"><div class="role">Backup</div><div class="pick"><code>pg_dump</code> zilnic + export Markdown</div><div class="why">Dump-ul e pentru restore rapid; exportul în fișiere <code>.md</code> într-un repo git privat e plasa de siguranță care se citește și fără aplicație.</div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap stack-lg">
+    <div class="sec-head prose">
+      <div class="eyebrow">Model de date</div>
+      <h2>O singură tabelă pentru comenzi și scripturi</h2>
+      <p>Diferența dintre o comandă de o linie și un script de 200 de linii e o coloană <code>kind</code>, nu o schemă separată. Altfel ajungi cu două module de căutare, două de tagging și două dashboard-uri.</p>
+    </div>
+    <div>
+      <div class="codecap">schema.sql — nucleul</div>
+      <pre><span class="c">-- domenii ierarhice: Windows &gt; Active Directory &gt; Utilizatori</span>
+<span class="k">CREATE TABLE</span> categories (
+  id          uuid <span class="k">PRIMARY KEY DEFAULT</span> gen_random_uuid(),
+  name        text <span class="k">NOT NULL</span>,
+  slug        text <span class="k">NOT NULL UNIQUE</span>,
+  parent_id   uuid <span class="k">REFERENCES</span> categories(id) <span class="k">ON DELETE SET NULL</span>,
+  icon        text,
+  sort_order  int  <span class="k">DEFAULT</span> 0
+);
+
+<span class="k">CREATE TABLE</span> tags (
+  id     uuid <span class="k">PRIMARY KEY DEFAULT</span> gen_random_uuid(),
+  name   text <span class="k">NOT NULL</span>,
+  slug   text <span class="k">NOT NULL UNIQUE</span>,
+  color  text                          <span class="c">-- opțional, pentru chips colorate</span>
+);
+
+<span class="k">CREATE TYPE</span> entry_kind <span class="k">AS ENUM</span> (<span class="s">'command'</span>, <span class="s">'script'</span>);
+<span class="k">CREATE TYPE</span> risk_level <span class="k">AS ENUM</span> (<span class="s">'safe'</span>, <span class="s">'caution'</span>, <span class="s">'destructive'</span>);
+
+<span class="k">CREATE TABLE</span> entries (
+  id             uuid <span class="k">PRIMARY KEY DEFAULT</span> gen_random_uuid(),
+  owner_id       uuid <span class="k">NOT NULL REFERENCES</span> users(id),
+  kind           entry_kind  <span class="k">NOT NULL</span>,
+  title          text        <span class="k">NOT NULL</span>,     <span class="c">-- singurul câmp obligatoriu la salvarea rapidă</span>
+  body           text        <span class="k">NOT NULL</span>,     <span class="c">-- comanda sau conținutul scriptului</span>
+  language       text        <span class="k">NOT NULL</span>,     <span class="c">-- powershell | cmd | bash | sql | cisco | mikrotik</span>
+  platform       text[]      <span class="k">DEFAULT</span> <span class="s">'{}'</span>, <span class="c">-- {windows,linux,esxi,ios}</span>
+  description    text,                    <span class="c">-- explicația detaliată, în Markdown</span>
+  rollback       text,                    <span class="c">-- cum dai înapoi; obligatoriu la 'destructive'</span>
+  risk           risk_level  <span class="k">NOT NULL DEFAULT</span> <span class="s">'safe'</span>,
+  requires_admin boolean     <span class="k">NOT NULL DEFAULT</span> false,
+  params         jsonb       <span class="k">NOT NULL DEFAULT</span> <span class="s">'[]'</span>, <span class="c">-- [{name,label,default,example}]</span>
+  category_id    uuid <span class="k">REFERENCES</span> categories(id),
+  source_url     text,                    <span class="c">-- de unde ai luat-o: docs, KB, forum</span>
+  is_favorite    boolean     <span class="k">NOT NULL DEFAULT</span> false,
+  copy_count     int         <span class="k">NOT NULL DEFAULT</span> 0,
+  last_used_at   timestamptz,
+  archived_at    timestamptz,             <span class="c">-- soft delete: nu ștergi niciodată de tot</span>
+  created_at     timestamptz <span class="k">NOT NULL DEFAULT</span> now(),
+  updated_at     timestamptz <span class="k">NOT NULL DEFAULT</span> now(),
+  search         tsvector                 <span class="c">-- întreținut de trigger, vezi secțiunea Căutare</span>
+);
+
+<span class="k">CREATE TABLE</span> entry_tags (
+  entry_id uuid <span class="k">REFERENCES</span> entries(id) <span class="k">ON DELETE CASCADE</span>,
+  tag_id   uuid <span class="k">REFERENCES</span> tags(id)    <span class="k">ON DELETE CASCADE</span>,
+  <span class="k">PRIMARY KEY</span> (entry_id, tag_id)
+);
+
+<span class="c">-- istoricul scripturilor: o intrare la fiecare salvare care schimbă body-ul</span>
+<span class="k">CREATE TABLE</span> entry_versions (
+  id         uuid <span class="k">PRIMARY KEY DEFAULT</span> gen_random_uuid(),
+  entry_id   uuid <span class="k">NOT NULL REFERENCES</span> entries(id) <span class="k">ON DELETE CASCADE</span>,
+  version    int  <span class="k">NOT NULL</span>,
+  body       text <span class="k">NOT NULL</span>,
+  note       text,                        <span class="c">-- „am adăugat -WhatIf"</span>
+  created_at timestamptz <span class="k">NOT NULL DEFAULT</span> now(),
+  <span class="k">UNIQUE</span> (entry_id, version)
+);
+
+<span class="c">-- fiecare copiere / descărcare; alimentează dashboard-ul</span>
+<span class="k">CREATE TABLE</span> usage_log (
+  id       bigserial <span class="k">PRIMARY KEY</span>,
+  entry_id uuid <span class="k">NOT NULL REFERENCES</span> entries(id) <span class="k">ON DELETE CASCADE</span>,
+  action   text <span class="k">NOT NULL</span>,              <span class="c">-- copy | download | open</span>
+  at       timestamptz <span class="k">NOT NULL DEFAULT</span> now()
+);</pre>
+    </div>
+    <div class="prose stack">
+      <h3>Trei decizii care contează mai târziu</h3>
+      <p class="note"><b>Parametrii sunt date, nu text.</b> Comanda conține <code>{{upn}}</code>, iar <code>params</code> descrie ce e <code>upn</code>: etichetă, exemplu, valoare implicită. De acolo iese formularul de completare și butonul „Copiază completat". E singura protecție reală împotriva rulării unei comenzi cu numele serverului greșit.</p>
+      <p class="note"><b>Categorie una, taguri multe.</b> Categoria e ierarhică și răspunde la „unde stă asta?" (Windows → Active Directory). Tagurile sunt libere și răspund la „când îmi trebuie?" (<code>troubleshooting</code>, <code>audit</code>, <code>onboarding</code>, <code>urgent</code>). Amestecarea lor e greșeala clasică ce duce la 200 de taguri inutilizabile.</p>
+      <p class="note"><b>Nu ștergi niciodată.</b> <code>archived_at</code> în loc de <code>DELETE</code>. Comanda pe care o ștergi azi pentru că „nu mai folosim serverul ăla" e exact cea de care ai nevoie peste opt luni.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap stack-lg">
+    <div class="sec-head prose">
+      <div class="eyebrow">Căutare</div>
+      <h2>Modulul de căutare și filtrare</h2>
+      <p>Postgres face toată treaba. Ranking ponderat, ca titlul și tagurile să bată o potrivire întâmplătoare din mijlocul unui script de 200 de linii.</p>
+    </div>
+    <div class="flow">
+      <div class="flow-text">
+        <h3>Cum se construiește indexul</h3>
+        <ul class="steps">
+          <li><span class="n">A</span><span>Titlul, greutate maximă. Cauți „flush dns", primești intrarea numită așa.</span></li>
+          <li><span class="n">B</span><span>Tagurile și numele categoriei, agregate în același vector la fiecare salvare.</span></li>
+          <li><span class="n">C</span><span>Descrierea — prinde întrebările de tipul „cum verific de ce nu se replică".</span></li>
+          <li><span class="n">D</span><span>Corpul comenzii — ultimul ca pondere, dar prezent: cauți <code>Get-ADReplication</code> și îl găsești.</span></li>
+        </ul>
+        <p class="note" style="font-size:.89rem; margin-top:6px">Peste asta, <code>pg_trgm</code> pe titlu acoperă greșelile de tastare („ipconfig" scris „ipcofnig"), iar <code>unaccent</code> normalizează diacriticele din explicațiile scrise în română.</p>
+      </div>
+      <div>
+        <div class="codecap">index + interogare</div>
+        <pre><span class="c">-- vectorul, întreținut de trigger la INSERT/UPDATE</span>
+<span class="k">UPDATE</span> entries <span class="k">SET</span> search =
+    setweight(to_tsvector(<span class="s">'simple'</span>, unaccent(title)),        <span class="s">'A'</span>)
+ || setweight(to_tsvector(<span class="s">'simple'</span>, unaccent(tags_text)),    <span class="s">'B'</span>)
+ || setweight(to_tsvector(<span class="s">'simple'</span>, unaccent(description)), <span class="s">'C'</span>)
+ || setweight(to_tsvector(<span class="s">'simple'</span>, body),                  <span class="s">'D'</span>);
+
+<span class="k">CREATE INDEX</span> entries_search_idx <span class="k">ON</span> entries <span class="k">USING</span> GIN (search);
+<span class="k">CREATE INDEX</span> entries_title_trgm <span class="k">ON</span> entries <span class="k">USING</span> GIN (title gin_trgm_ops);
+
+<span class="c">-- căutare + filtre, într-o singură interogare</span>
+<span class="k">SELECT</span> e.*, ts_rank(e.search, q) <span class="k">AS</span> rank
+<span class="k">FROM</span> entries e, websearch_to_tsquery(<span class="s">'simple'</span>, $1) q
+<span class="k">WHERE</span> e.archived_at <span class="k">IS NULL</span>
+  <span class="k">AND</span> (e.search @@ q <span class="k">OR</span> e.title % $1)
+  <span class="k">AND</span> ($2::uuid   <span class="k">IS NULL OR</span> e.category_id = $2)
+  <span class="k">AND</span> ($3::text[] <span class="k">IS NULL OR</span> e.language = <span class="k">ANY</span>($3))
+<span class="k">ORDER BY</span> rank <span class="k">DESC</span>, e.copy_count <span class="k">DESC</span>
+<span class="k">LIMIT</span> 50;</pre>
+      </div>
+    </div>
+    <div class="stack">
+      <h3>Filtrele din interfață</h3>
+      <div class="filters">
+        <span class="f">domeniu: <b>Active Directory</b></span>
+        <span class="f">tag: <b>troubleshooting</b> + <b>urgent</b></span>
+        <span class="f">shell: <b>powershell</b></span>
+        <span class="f">platformă: <b>windows</b></span>
+        <span class="f">risc: <b>destructive</b></span>
+        <span class="f">tip: <b>script</b></span>
+        <span class="f">necesită admin: <b>da</b></span>
+        <span class="f">doar favorite</span>
+        <span class="f">folosite recent</span>
+        <span class="f">niciodată folosite</span>
+        <span class="f">fără descriere</span>
+      </div>
+      <p class="note" style="max-width:64ch">Filtrele active se scriu în URL (<code>?q=dns&amp;tag=network&amp;lang=powershell</code>), ca o căutare des folosită să devină un bookmark. <kbd>Ctrl</kbd>+<kbd>K</kbd> deschide paleta peste orice ecran; <kbd>↑</kbd> <kbd>↓</kbd> navighează, <kbd>Enter</kbd> copiază direct, <kbd>Tab</kbd> deschide detaliul.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap stack-lg">
+    <div class="sec-head prose">
+      <div class="eyebrow">Fluxuri</div>
+      <h2>Cele trei drumuri pe care le faci zilnic</h2>
+    </div>
+    <div class="flow">
+      <div class="flow-text">
+        <h3>1 &middot; Am rezolvat ceva, vreau să nu uit</h3>
+        <ul class="steps">
+          <li><span class="n">1</span><span><kbd>Ctrl</kbd>+<kbd>N</kbd> oriunde în aplicație deschide formularul rapid.</span></li>
+          <li><span class="n">2</span><span>Lipești comanda. Limbajul e detectat automat (<code>Get-</code> → PowerShell, <code>#!/bin/bash</code> → bash) și se poate corecta dintr-un select.</span></li>
+          <li><span class="n">3</span><span>Titlul e sugerat din comentariul de pe prima linie; îl accepți sau îl rescrii.</span></li>
+          <li><span class="n">4</span><span><kbd>Enter</kbd> salvează. Descrierea și tagurile pot veni mai târziu — intrarea apare în „de completat" pe dashboard până le adaugi.</span></li>
+        </ul>
+      </div>
+      <div>
+        <div class="codecap">exemplu de intrare salvată</div>
+        <pre><span class="c"># Conturi AD dezactivate care încă consumă licență M365</span>
+<span class="k">Get-ADUser</span> -Filter <span class="s">'Enabled -eq $false'</span> -Properties LastLogonDate <span class="k">|</span>
+  <span class="k">Where-Object</span> { $_.LastLogonDate -lt (Get-Date).AddDays(-90) } <span class="k">|</span>
+  <span class="k">Select-Object</span> Name, SamAccountName, LastLogonDate <span class="k">|</span>
+  <span class="k">Export-Csv</span> <span class="s">"{{cale_export}}"</span> -NoTypeInformation -Encoding UTF8
+
+<span class="c">domeniu : Windows &gt; Active Directory</span>
+<span class="c">taguri  : audit, licentiere, curatenie</span>
+<span class="c">risc    : safe  ·  admin: da  ·  parametru: cale_export</span></pre>
+      </div>
+    </div>
+    <div class="flow">
+      <div class="flow-text">
+        <h3>2 &middot; Îmi trebuie ceva acum, sub presiune</h3>
+        <ul class="steps">
+          <li><span class="n">1</span><span><kbd>Ctrl</kbd>+<kbd>K</kbd>, scrii „replicare" sau „dns".</span></li>
+          <li><span class="n">2</span><span>Rezultatele apar în timp real, cu domeniul și tagurile pe fiecare rând.</span></li>
+          <li><span class="n">3</span><span><kbd>Enter</kbd> copiază comanda și închide paleta. Un mesaj scurt confirmă; <code>copy_count</code> crește.</span></li>
+          <li><span class="n">4</span><span>Dacă are parametri, se deschide întâi formularul — comanda nu ajunge niciodată în clipboard cu <code>{{...}}</code> în ea.</span></li>
+        </ul>
+      </div>
+      <div class="flow-text">
+        <h3>3 &middot; Rulez ceva care poate strica</h3>
+        <ul class="steps">
+          <li><span class="n">1</span><span>Intrările marcate <b style="color:var(--danger)">destructive</b> au bandă roșie în listă și în detaliu.</span></li>
+          <li><span class="n">2</span><span>La copiere apare un dialog cu explicația și cu pasul de rollback, care trebuie confirmat.</span></li>
+          <li><span class="n">3</span><span>Câmpul <code>rollback</code> e obligatoriu la salvare pentru acest nivel de risc — nu poți marca ceva distructiv fără să scrii cum se repară.</span></li>
+          <li><span class="n">4</span><span>Detectorul propune singur eticheta când vede <code>Remove-</code>, <code>rm -rf</code>, <code>DROP</code>, <code>format</code>, <code>dd if=</code>, <code>reset factory</code>.</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap stack-lg">
+    <div class="sec-head prose">
+      <div class="eyebrow">Dashboard</div>
+      <h2>Sumarul administrativ</h2>
+      <p>Dashboard-ul nu e o vitrină cu cifre mari. Fiecare element răspunde la o întrebare pe care ți-o pui despre propria bază de cunoștințe.</p>
+    </div>
+    <div class="wire" role="img" aria-label="Schiță a ecranului de dashboard: un rând de indicatori, un panou cu distribuția pe domenii, unul cu cele mai copiate comenzi, unul cu activitatea pe săptămâni și unul cu intrările de revizuit.">
+      <div class="wire-bar"><span class="dot"></span><span class="t">schiță de ecran — dispunerea elementelor, fără date reale</span></div>
+      <div class="tiles">
+        <div class="tile"><span class="lab">Comenzi</span><span class="val">—</span><span class="sub">adăugate în 30 zile</span></div>
+        <div class="tile"><span class="lab">Scripturi</span><span class="val">—</span><span class="sub">total versiuni</span></div>
+        <div class="tile"><span class="lab">Domenii · taguri</span><span class="val">—</span><span class="sub">acoperire</span></div>
+        <div class="tile warn"><span class="lab">De completat</span><span class="val">—</span><span class="sub">fără descriere sau tag</span></div>
+      </div>
+      <div class="panels">
+        <div class="panel">
+          <span class="h">Distribuție pe domenii</span>
+          <div class="ph">
+            <span class="line"><span>Windows / PowerShell</span><span class="track"></span></span>
+            <span class="line"><span>Active Directory / M365</span><span class="track"></span></span>
+            <span class="line"><span>Linux / Bash</span><span class="track"></span></span>
+            <span class="line"><span>Rețea / Virtualizare</span><span class="track"></span></span>
+          </div>
+        </div>
+        <div class="panel">
+          <span class="h">Cele mai copiate · 30 zile</span>
+          <div class="ph">
+            <span class="line"><span>01 ·····························</span></span>
+            <span class="line"><span>02 ·····························</span></span>
+            <span class="line"><span>03 ·····························</span></span>
+            <span class="line"><span>04 ·····························</span></span>
+          </div>
+        </div>
+      </div>
+      <div class="panels">
+        <div class="panel">
+          <span class="h">Activitate · ultimele 12 săptămâni</span>
+          <div class="ph"><span class="line"><span>intensitate pe săptămână</span><span class="track"></span></span></div>
+        </div>
+        <div class="panel">
+          <span class="h">De revizuit</span>
+          <div class="ph"><span class="line"><span>nefolosite de peste 180 de zile</span></span><span class="line"><span>distructive fără rollback scris</span></span></div>
+        </div>
+      </div>
+      <p class="wire-note">Fiecare panou e un link către lista filtrată corespunzător — dashboard-ul e un punct de plecare, nu un capăt de drum.</p>
+    </div>
+    <div class="metrics">
+      <div class="metric"><span class="m">Total pe tip și pe domeniu</span><span class="q">Câte comenzi și scripturi am, și cum sunt împărțite?</span></div>
+      <div class="metric"><span class="m">Adăugate în ultimele 30 de zile</span><span class="q">Mai contribui la bază sau doar consum din ea?</span></div>
+      <div class="metric"><span class="m">Top 10 cele mai copiate</span><span class="q">Ce merită scos în favorite sau transformat în script parametrizat?</span></div>
+      <div class="metric"><span class="m">Acoperire pe domenii</span><span class="q">Unde am 40 de comenzi și unde am 3? Acolo e golul de documentat.</span></div>
+      <div class="metric"><span class="m">Intrări incomplete</span><span class="q">Care au rămas fără explicație, fără tag sau fără categorie?</span></div>
+      <div class="metric"><span class="m">Distructive fără rollback</span><span class="q">Ce am marcat periculos, dar n-am scris cum se repară?</span></div>
+      <div class="metric"><span class="m">Nefolosite de peste 180 de zile</span><span class="q">Ce e depășit, ce trebuie actualizat, ce se arhivează?</span></div>
+      <div class="metric"><span class="m">Activitate pe 12 săptămâni</span><span class="q">Când folosesc aplicația — și când am uitat de ea?</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap stack">
+    <div class="sec-head prose">
+      <div class="eyebrow">Etape</div>
+      <h2>Ordinea de construcție</h2>
+      <p>Fazele sunt secvențiale pentru că fiecare se sprijină pe cea dinainte, și fiecare se termină cu ceva ce poți folosi — nu cu cod pe jumătate. Estimările presupun sesiuni de câteva ore, nu zile pline.</p>
+    </div>
+    <div class="phases">
+      <div class="phase">
+        <div class="idx">FAZA 0<span>½ zi</span></div>
+        <div class="body">
+          <h3>Fundația</h3>
+          <p>Repo git, workspace pnpm cu <code>apps/web</code>, <code>apps/api</code> și <code>packages/shared</code>. <code>docker-compose.yml</code> cu Postgres 16 și Adminer. Configurare Drizzle, prima migrare, rută <code>/health</code>.</p>
+        </div>
+        <div class="deliv"><b>Gata când</b><code>docker compose up</code> ridică baza, iar <code>GET /api/health</code> întoarce 200 din browser.</div>
+      </div>
+      <div class="phase">
+        <div class="idx">FAZA 1<span>1–2 zile</span></div>
+        <div class="body">
+          <h3>Modelul și API-ul</h3>
+          <p>Toate tabelele de mai sus, extensiile <code>pg_trgm</code> și <code>unaccent</code>, CRUD complet pentru intrări, taguri și categorii, validare Zod partajată, soft delete. Seed cu 20 de comenzi reale din munca ta, ca să nu testezi pe date inventate.</p>
+        </div>
+        <div class="deliv"><b>Gata când</b>Creezi, editezi și arhivezi o comandă cu taguri prin curl, iar datele arată corect în Adminer.</div>
+      </div>
+      <div class="phase">
+        <div class="idx">FAZA 2<span>2 zile</span></div>
+        <div class="body">
+          <h3>Vizualizare și copiere</h3>
+          <p>Lista cu două densități (carduri și rânduri compacte), panoul de detaliu cu evidențiere de sintaxă, buton de copiere cu confirmare, favorite, navigare de la tastatură. Formularul de adăugare/editare cu CodeMirror și previzualizare Markdown pentru descriere.</p>
+        </div>
+        <div class="deliv"><b>Gata când</b>Găsești manual o comandă în listă și o ai în clipboard din două apăsări.</div>
+      </div>
+      <div class="phase">
+        <div class="idx">FAZA 3<span>1–2 zile</span></div>
+        <div class="body">
+          <h3>Căutare și filtrare</h3>
+          <p><code>tsvector</code> întreținut de trigger, indecși GIN, endpoint de căutare cu ranking, bara de filtre cu chips, sincronizare cu URL-ul, paleta <kbd>Ctrl</kbd>+<kbd>K</kbd>, evidențierea potrivirilor în rezultate.</p>
+        </div>
+        <div class="deliv"><b>Gata când</b>Scrii „dns" în paletă și <code>ipconfig /flushdns</code> e primul rezultat, în sub 100 ms.</div>
+      </div>
+      <div class="phase">
+        <div class="idx">FAZA 4<span>2 zile</span></div>
+        <div class="body">
+          <h3>Partea de scripturi</h3>
+          <p>Editor pe ecran complet, versionare automată la fiecare modificare a conținutului, comparație între versiuni, restaurare, descărcare cu extensia corectă (<code>.ps1</code>, <code>.sh</code>, <code>.bat</code>), formular de parametri și „Copiază completat".</p>
+        </div>
+        <div class="deliv"><b>Gata când</b>Descarci un <code>.ps1</code> parametrizat și rulează fără nicio editare manuală.</div>
+      </div>
+      <div class="phase">
+        <div class="idx">FAZA 5<span>1 zi</span></div>
+        <div class="body">
+          <h3>Dashboard</h3>
+          <p>Agregările SQL, indicatorii, distribuția pe domenii, topul celor mai copiate, lista „de revizuit", banda de activitate. Fiecare panou navighează către lista filtrată.</p>
+        </div>
+        <div class="deliv"><b>Gata când</b>Dashboard-ul îți arată un domeniu slab acoperit fără să deschizi lista de comenzi.</div>
+      </div>
+      <div class="phase">
+        <div class="idx">FAZA 6<span>1–2 zile</span></div>
+        <div class="body">
+          <h3>Producție</h3>
+          <p>Autentificare cu sesiune, Caddy cu TLS, backup <code>pg_dump</code> zilnic plus export Markdown într-un repo privat, import din istoricul de shell (<code>ConsoleHost_history.txt</code>, <code>~/.bash_history</code>) și din notițele vechi, PWA pentru citire offline pe telefon.</p>
+        </div>
+        <div class="deliv"><b>Gata când</b>Intri de pe telefon prin HTTPS, iar un restore de test dintr-un dump confirmă backup-ul.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap stack">
+    <div class="sec-head prose">
+      <div class="eyebrow">Reguli</div>
+      <h2>Ce se construiește din prima, nu se adaugă pe urmă</h2>
+      <p>Sunt lucruri care, odată ce baza are 300 de intrări, devin foarte scumpe de reparat.</p>
+    </div>
+    <div class="guards">
+      <div class="guard crit">
+        <h3>Zero secrete în bază</h3>
+        <p>Scanner la salvare care caută <code>-AsPlainText</code>, <code>password=</code>, chei API, blocuri PEM, connection strings. Blochează salvarea și cere fie înlocuirea cu un parametru, fie confirmarea explicită că e un exemplu. Baza asta va ajunge într-un backup, într-un repo git și poate pe telefon.</p>
+      </div>
+      <div class="guard crit">
+        <h3>Nimic nu se execută din aplicație</h3>
+        <p>Aplicația copiază și descarcă, atât. O funcție de „rulează pe mașina X" transformă un caiet de notițe într-un instrument de administrare la distanță — cu totul altă discuție despre securitate. Dacă o vrei vreodată, e proiect separat.</p>
+      </div>
+      <div class="guard warn">
+        <h3>Rollback obligatoriu la risc mare</h3>
+        <p>Nivelul de risc e o coloană cu constrângere, nu un tag. Nu poți salva ceva marcat <code>destructive</code> fără text în <code>rollback</code>. Regula te obligă să gândești o dată, în liniște, în loc să improvizezi la 2 noaptea.</p>
+      </div>
+      <div class="guard info">
+        <h3>Export citibil fără aplicație</h3>
+        <p>Un job zilnic scrie fiecare intrare ca fișier Markdown cu front-matter, în structura domeniilor. Dacă aplicația cade, dacă baza se corupe, dacă te plictisești de proiect — cunoștințele rămân într-un folder pe care îl citește orice editor.</p>
+      </div>
+      <div class="guard info">
+        <h3>Import din ce ai deja</h3>
+        <p>Prima zi de folosire nu trebuie să înceapă cu o listă goală. Un importator care citește istoricul de PowerShell și bash, plus fișiere <code>.md</code> și <code>.txt</code>, îți dă 50 de intrări de curățat în loc de zero de scris.</p>
+      </div>
+      <div class="guard info">
+        <h3>Taguri controlate</h3>
+        <p>Autocomplete la scriere, cu tagurile existente propuse primele, și un ecran de administrare unde poți redenumi sau uni taguri. Fără asta ajungi la <code>retea</code>, <code>rețea</code>, <code>network</code> și <code>net</code> pentru același lucru.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap stack">
+    <div class="sec-head prose">
+      <div class="eyebrow">Amânat</div>
+      <h2>Ce lăsăm pentru v2, și de ce</h2>
+    </div>
+    <div class="later">
+      <div class="later-row"><span class="w">Acces pentru colegi, cu roluri</span><span class="r">Schema e pregătită (<code>owner_id</code> peste tot), dar partajarea aduce permisiuni, conflicte de editare și moderare. Întâi trebuie să fie util pentru tine singur.</span></div>
+      <div class="later-row"><span class="w">Extensie VS Code / Windows Terminal</span><span class="r">Foarte tentantă, dar are sens abia după ce baza are câteva sute de intrări bine tagate.</span></div>
+      <div class="later-row"><span class="w">Sincronizare bidirecțională cu un repo git</span><span class="r">Exportul într-un sens e simplu și intră în faza 6. Importul înapoi înseamnă rezolvare de conflicte — complexitate mare pentru un câștig mic.</span></div>
+      <div class="later-row"><span class="w">Comenzi legate în proceduri</span><span class="r">„Onboarding utilizator nou" ca secvență de 6 comenzi cu bife. Util, dar e o entitate nouă (<code>runbooks</code>) și merită proiectată după ce vezi cum folosești aplicația în realitate.</span></div>
+      <div class="later-row"><span class="w">Generarea explicațiilor cu AI</span><span class="r">Ar putea completa descrierea pornind de la comandă. Se adaugă peste schema existentă oricând, fără migrare.</span></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">Plan v1 &middot; 9 septembrie 2026 &middot; sursă: <code>docs/plan.html</code> în repo — editabil și republicabil.</div>
+</footer>

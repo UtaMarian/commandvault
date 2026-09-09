@@ -1,0 +1,110 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ground: 244 246 247;
+  --surface: 255 255 255;
+  --surface-2: 234 238 240;
+  --ink: 20 24 28;
+  --ink-2: 88 101 112;
+  --ink-3: 138 149 158;
+  --line: 219 226 230;
+  --line-strong: 191 202 209;
+  --accent: 14 110 120;
+  --accent-soft: 223 239 241;
+  --accent-ink: 255 255 255;
+  --ok: 42 115 67;
+  --ok-soft: 225 240 230;
+  --signal: 168 87 8;
+  --signal-soft: 248 235 218;
+  --danger: 172 35 24;
+  --danger-soft: 248 231 229;
+  --code-bg: 16 26 30;
+  --code-ink: 213 226 230;
+  --code-line: 34 51 58;
+  --code-dim: 124 144 152;
+}
+
+.dark {
+  --ground: 14 20 23;
+  --surface: 21 29 33;
+  --surface-2: 27 37 42;
+  --ink: 227 234 237;
+  --ink-2: 156 169 177;
+  --ink-3: 109 124 132;
+  --line: 37 50 58;
+  --line-strong: 55 71 79;
+  --accent: 79 193 204;
+  --accent-soft: 17 51 58;
+  --accent-ink: 6 34 38;
+  --ok: 103 192 133;
+  --ok-soft: 19 48 30;
+  --signal: 222 154 82;
+  --signal-soft: 49 36 15;
+  --danger: 232 129 118;
+  --danger-soft: 57 26 23;
+  --code-bg: 8 14 17;
+  --code-ink: 206 220 224;
+  --code-line: 27 40 46;
+  --code-dim: 107 128 136;
+}
+
+* {
+  border-color: rgb(var(--line));
+}
+
+html {
+  color-scheme: light;
+}
+html.dark {
+  color-scheme: dark;
+}
+
+body {
+  background-color: rgb(var(--ground));
+  color: rgb(var(--ink));
+  font-family: "IBM Plex Sans", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background-color: rgb(var(--accent) / 0.25);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+:focus-visible {
+  outline: 2px solid rgb(var(--accent));
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.cm-editor {
+  font-family: "JetBrains Mono", ui-monospace, Consolas, monospace !important;
+  font-size: 0.85rem !important;
+}
+.cm-editor.cm-focused {
+  outline: none !important;
+}
+
+.font-variant-tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.toast-in {
+  animation: toast-in 180ms ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .toast-in { animation: none; }
+}
