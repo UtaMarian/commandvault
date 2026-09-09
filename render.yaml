@@ -14,8 +14,8 @@ services:
     plan: free
     region: frankfurt
     branch: main
-    buildCommand: corepack enable && corepack prepare pnpm@10.29.1 --activate && pnpm install --frozen-lockfile
-    startCommand: pnpm --filter @command-vault/api run start
+    buildCommand: npx pnpm@10.29.1 install --frozen-lockfile
+    startCommand: npx pnpm@10.29.1 --filter @command-vault/api run start
     healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
@@ -31,7 +31,7 @@ services:
     name: commandvault-web
     runtime: static
     branch: main
-    buildCommand: corepack enable && corepack prepare pnpm@10.29.1 --activate && pnpm install --frozen-lockfile && pnpm --filter @command-vault/web run build
+    buildCommand: npx pnpm@10.29.1 install --frozen-lockfile && npx pnpm@10.29.1 --filter @command-vault/web run build
     staticPublishPath: apps/web/dist
     routes:
       - type: rewrite

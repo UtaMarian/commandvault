@@ -94,8 +94,8 @@ Dacă Render arată o eroare de validare pe `render.yaml` (schema mai evoluează
 **1. API — New + → Web Service**
 - Repo: `UtaMarian/commandvault` · Branch: `main` · Root Directory: *(gol)*
 - Runtime: **Node**
-- Build Command: `corepack enable && corepack prepare pnpm@10.29.1 --activate && pnpm install --frozen-lockfile`
-- Start Command: `pnpm --filter @command-vault/api run start`
+- Build Command: `npx pnpm@10.29.1 install --frozen-lockfile`
+- Start Command: `npx pnpm@10.29.1 --filter @command-vault/api run start`
 - Health Check Path: `/api/health`
 - Environment:
   - `DATABASE_URL` = connection string-ul de Neon (același din `.env`)
@@ -106,7 +106,7 @@ Dacă Render arată o eroare de validare pe `render.yaml` (schema mai evoluează
 
 **2. Frontend — New + → Static Site**
 - Același repo, Root Directory: *(gol)*
-- Build Command: `corepack enable && corepack prepare pnpm@10.29.1 --activate && pnpm install --frozen-lockfile && pnpm --filter @command-vault/web run build`
+- Build Command: `npx pnpm@10.29.1 install --frozen-lockfile && npx pnpm@10.29.1 --filter @command-vault/web run build`
 - Publish Directory: `apps/web/dist`
 - Create Static Site → notează URL-ul
 
