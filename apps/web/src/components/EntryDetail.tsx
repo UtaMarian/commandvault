@@ -48,7 +48,7 @@ export function EntryDetail({ entry, onClose, onDeleted }: { entry: EntryDetailT
 
   return (
     <div className="flex h-full flex-col bg-surface">
-      <div className="flex items-start justify-between gap-3 border-b border-line px-5 py-4">
+      <div className="flex items-start justify-between gap-3 border-b border-line px-4 py-4 sm:px-5">
         <div className="min-w-0">
           <div className="flex items-center gap-2 text-ink-3">
             <KindIcon size={14} />
@@ -62,7 +62,7 @@ export function EntryDetail({ entry, onClose, onDeleted }: { entry: EntryDetailT
         </button>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2 border-b border-line px-5 py-3">
+      <div className="flex flex-wrap items-center gap-2 border-b border-line px-4 py-3 sm:px-5">
         <RiskBadge risk={entry.risk} />
         <LanguageTag language={entry.language} />
         {entry.requiresAdmin && <AdminBadge />}
@@ -71,7 +71,7 @@ export function EntryDetail({ entry, onClose, onDeleted }: { entry: EntryDetailT
         )}
       </div>
 
-      <div className="flex flex-wrap gap-2 border-b border-line px-5 py-3">
+      <div className="flex flex-wrap gap-2 border-b border-line px-4 py-3 sm:px-5">
         <button onClick={handleCopyClick} className="flex items-center gap-1.5 rounded-md bg-accent px-3 py-1.5 text-sm font-medium text-accent-ink hover:opacity-90">
           <Copy size={14} /> Copiază
         </button>
@@ -104,7 +104,7 @@ export function EntryDetail({ entry, onClose, onDeleted }: { entry: EntryDetailT
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-5 py-4">
+      <div className="flex-1 overflow-y-auto px-4 py-4 sm:px-5">
         {entry.risk === "destructive" && (
           <div className="mb-4 rounded-lg border border-danger/40 bg-danger-soft px-3.5 py-3">
             <div className="flex items-center gap-1.5 text-sm font-semibold text-danger">

@@ -58,17 +58,23 @@ export function EntryRow({
       </div>
 
       <div className="flex shrink-0 flex-col items-end gap-2">
+        {/* Visible by default; only fades in on hover from md up, where a mouse makes hover a
+            reliable signal. Touch has no hover — leaving these opacity-0 there would make them
+            un-tappable, since nothing ever sets group-hover on a touchscreen. */}
         <div className="flex items-center gap-1">
           <button
             onClick={(e) => { e.stopPropagation(); onToggleFavorite(); }}
-            className={clsx("rounded p-1 hover:bg-surface-2", entry.isFavorite ? "text-signal" : "text-ink-3 opacity-0 group-hover:opacity-100")}
+            className={clsx(
+              "rounded p-1.5 hover:bg-surface-2 md:opacity-0 md:group-hover:opacity-100",
+              entry.isFavorite ? "text-signal opacity-100 md:opacity-100" : "text-ink-3"
+            )}
             aria-label={entry.isFavorite ? "Scoate din favorite" : "Adaugă la favorite"}
           >
             <Star size={15} fill={entry.isFavorite ? "currentColor" : "none"} />
           </button>
           <button
             onClick={(e) => { e.stopPropagation(); onCopy(); }}
-            className="rounded p-1 text-ink-3 opacity-0 hover:bg-surface-2 hover:text-accent group-hover:opacity-100"
+            className="rounded p-1.5 text-ink-3 hover:bg-surface-2 hover:text-accent md:opacity-0 md:group-hover:opacity-100"
             aria-label="Copiază"
           >
             <Copy size={15} />

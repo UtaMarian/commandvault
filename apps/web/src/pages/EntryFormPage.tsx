@@ -174,14 +174,14 @@ export function EntryFormPage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-6 py-6">
+    <div className="mx-auto h-full max-w-3xl overflow-y-auto px-4 py-6 sm:px-6">
       <Link to="/entries" className="mb-4 inline-flex items-center gap-1.5 text-sm text-ink-2 hover:text-ink">
         <ArrowLeft size={15} /> Înapoi la listă
       </Link>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-        <div className="flex items-center gap-3">
-          <h1 className="text-xl font-semibold text-ink">{isEdit ? "Editează intrarea" : "Adaugă o intrare"}</h1>
+        <div className="flex flex-wrap items-center gap-3">
+          <h1 className="text-lg font-semibold text-ink sm:text-xl">{isEdit ? "Editează intrarea" : "Adaugă o intrare"}</h1>
           <div className="ml-auto flex rounded-md border border-line-strong p-0.5">
             {ENTRY_KINDS.map((k) => (
               <button
@@ -229,7 +229,7 @@ export function EntryFormPage() {
           </div>
         )}
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <label className="flex flex-col gap-1">
             <span className="text-xs font-medium text-ink-2 flex items-center gap-1">
               Limbaj / shell
@@ -310,7 +310,7 @@ export function EntryFormPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <span className="text-xs font-medium text-ink-2">Domeniu</span>
             <div className="mt-1 flex gap-1.5">
@@ -381,7 +381,7 @@ export function EntryFormPage() {
           Necesită drepturi de administrator
         </label>
 
-        <div className="sticky bottom-0 -mx-6 flex justify-end gap-2 border-t border-line bg-ground px-6 py-3.5">
+        <div className="sticky bottom-0 -mx-4 flex justify-end gap-2 border-t border-line bg-ground px-4 py-3.5 sm:-mx-6 sm:px-6">
           <Link to="/entries" className="rounded-md border border-line-strong px-4 py-2 text-sm text-ink hover:bg-surface-2">Renunță</Link>
           <button
             type="submit" disabled={!canSubmit || submitting}

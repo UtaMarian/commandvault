@@ -50,7 +50,7 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center bg-ink/40 px-4 pt-[14vh] backdrop-blur-[2px]" onMouseDown={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+    <div className="fixed inset-0 z-50 flex items-start justify-center bg-ink/40 px-3 pt-[8vh] backdrop-blur-[2px] sm:px-4 sm:pt-[14vh]" onMouseDown={(e) => { if (e.target === e.currentTarget) onClose(); }}>
       <div className="w-full max-w-xl overflow-hidden rounded-xl border border-line bg-surface shadow-popover">
         <div className="flex items-center gap-2.5 border-b border-line px-4 py-3">
           <Search size={17} className="text-ink-3" />
@@ -86,10 +86,10 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
           ))}
         </div>
 
-        <div className="flex items-center gap-4 border-t border-line px-4 py-2 text-xs text-ink-3">
+        <div className="flex items-center gap-3 border-t border-line px-4 py-2 text-xs text-ink-3 sm:gap-4">
           <span className="flex items-center gap-1"><ArrowUp size={11} /><ArrowDown size={11} /> navighează</span>
           <span className="flex items-center gap-1"><CornerDownLeft size={11} /> copiază</span>
-          <span>Tab deschide detaliul</span>
+          <span className="hidden sm:inline">Tab deschide detaliul</span>
         </div>
       </div>
 

@@ -46,7 +46,7 @@ export function TagsAdminPage() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl px-6 py-6">
+    <div className="mx-auto h-full max-w-2xl overflow-y-auto px-4 py-6 sm:px-6">
       <h1 className="text-xl font-semibold text-ink">Organizare</h1>
       <p className="mt-0.5 text-sm text-ink-2">Domeniile și tagurile țin căutarea utilă — evită dubluri ca „rețea” / „retea” / „network”.</p>
 
@@ -111,13 +111,13 @@ export function TagsAdminPage() {
       <section className="mt-6">
         <h2 className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-ink"><Merge size={14} /> Combină două taguri</h2>
         <p className="mb-2 text-xs text-ink-2">Toate intrările primului tag trec pe al doilea, apoi primul e șters.</p>
-        <div className="flex items-center gap-2">
-          <select value={mergeFrom} onChange={(e) => setMergeFrom(e.target.value)} className="flex-1 rounded-md border border-line-strong bg-surface px-2.5 py-1.5 text-sm">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+          <select value={mergeFrom} onChange={(e) => setMergeFrom(e.target.value)} className="rounded-md border border-line-strong bg-surface px-2.5 py-1.5 text-sm sm:flex-1">
             <option value="">Tag de combinat</option>
             {tags?.map((t) => <option key={t.id} value={t.id}>#{t.name}</option>)}
           </select>
-          <span className="text-ink-3">→</span>
-          <select value={mergeTo} onChange={(e) => setMergeTo(e.target.value)} className="flex-1 rounded-md border border-line-strong bg-surface px-2.5 py-1.5 text-sm">
+          <span className="text-ink-3 hidden sm:inline">→</span>
+          <select value={mergeTo} onChange={(e) => setMergeTo(e.target.value)} className="rounded-md border border-line-strong bg-surface px-2.5 py-1.5 text-sm sm:flex-1">
             <option value="">Tag rezultat</option>
             {tags?.map((t) => <option key={t.id} value={t.id}>#{t.name}</option>)}
           </select>

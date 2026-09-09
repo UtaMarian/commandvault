@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { PackageOpen } from "lucide-react";
+import { clsx } from "clsx";
 import { FilterBar } from "../components/FilterBar";
 import { EntryRow } from "../components/EntryRow";
 import { EntryDetail } from "../components/EntryDetail";
@@ -61,7 +62,10 @@ export function EntriesPage() {
 
   return (
     <div className="flex h-full min-h-0">
-      <div className="flex min-w-0 flex-1 flex-col">
+      {/* On mobile this is one pane at a time (list, or detail full-width) — there's no room
+          for both side by side. `openId &&` hides the list instead of shrinking it, since a
+          squeezed list is unreadable on a phone. From md up they sit side by side as normal. */}
+      <div className={clsx("flex min-w-0 flex-1 flex-col", openId && "hidden md:flex")}>
         <FilterBar
           filters={filters}
           onChange={setFilters}
@@ -92,7 +96,7 @@ export function EntriesPage() {
       </div>
 
       {openEntry && (
-        <div className="w-[26rem] shrink-0 border-l border-line">
+        <div className="w-full shrink-0 border-line md:w-[26rem] md:border-l">
           <EntryDetail entry={openEntry} onClose={closeDetail} onDeleted={closeDetail} />
         </div>
       )}

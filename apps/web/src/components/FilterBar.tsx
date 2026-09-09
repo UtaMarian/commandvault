@@ -1,4 +1,5 @@
-import { Search, X, SlidersHorizontal } from "lucide-react";
+import { useState } from "react";
+import { Search, X, SlidersHorizontal, ChevronDown } from "lucide-react";
 import { clsx } from "clsx";
 import {
   LANGUAGES, LANGUAGE_LABELS, PLATFORMS, RISK_LEVELS, RISK_LABELS,
@@ -39,6 +40,11 @@ export function FilterBar({
   tags: (Tag & { entryCount: number })[];
   resultCount: number | undefined;
 }) {
+  // Collapsed by default on mobile — the full filter set (4 selects + 7 toggles + every tag)
+  // is a lot of scrolling before the first result on a phone. Desktop ignores this and always
+  // shows everything, since there's room and a collapse there would just be an extra click.
+  const [expanded, setExpanded] = useState(false);
+
   const activeCount = [
     filters.categoryId, filters.language, filters.risk, filters.kind,
     filters.requiresAdmin, filters.favoritesOnly, filters.neverUsed, filters.missingDescription, filters.stale,
@@ -52,41 +58,56 @@ export function FilterBar({
   };
 
   return (
-    <div className="flex flex-col gap-3 border-b border-line bg-surface px-4 py-3">
-      <div className="flex items-center gap-2">
+    <div className="flex flex-col gap-3 border-b border-line bg-surface px-3 py-3 sm:px-4">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
         <div className="relative flex-1">
           <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-3" />
           <input
             id="entry-search"
             value={filters.q ?? ""}
             onChange={(e) => set("q", e.target.value)}
-            placeholder="Caută după titlu, comandă, tag sau descriere…  (Ctrl+K)"
+            placeholder="Caută comandă, tag, descriere…"
             className="w-full rounded-lg border border-line-strong bg-surface py-2 pl-9 pr-3 text-sm text-ink placeholder:text-ink-3 focus:border-accent"
           />
         </div>
-        <select
-          value={filters.sort ?? "relevance"}
-          onChange={(e) => set("sort", e.target.value as EntryFilters["sort"])}
-          className="rounded-lg border border-line-strong bg-surface px-2.5 py-2 text-sm text-ink-2"
-          aria-label="Sortare"
-        >
-          <option value="relevance">Relevanță</option>
-          <option value="recent">Recent modificate</option>
-          <option value="popular">Cele mai copiate</option>
-          <option value="title">Titlu (A-Z)</option>
-        </select>
-        {activeCount > 0 && (
-          <button
-            onClick={() => onChange({ q: filters.q, sort: filters.sort })}
-            className="flex items-center gap-1 rounded-lg border border-line-strong px-2.5 py-2 text-xs text-ink-2 hover:bg-surface-2"
+        <div className="flex items-center gap-2">
+          <select
+            value={filters.sort ?? "relevance"}
+            onChange={(e) => set("sort", e.target.value as EntryFilters["sort"])}
+            className="flex-1 rounded-lg border border-line-strong bg-surface px-2.5 py-2 text-sm text-ink-2 sm:flex-none"
+            aria-label="Sortare"
           >
-            <X size={13} /> Șterge filtre ({activeCount})
+            <option value="relevance">Relevanță</option>
+            <option value="recent">Recent modificate</option>
+            <option value="popular">Cele mai copiate</option>
+            <option value="title">Titlu (A-Z)</option>
+          </select>
+          {activeCount > 0 && (
+            <button
+              onClick={() => onChange({ q: filters.q, sort: filters.sort })}
+              className="flex shrink-0 items-center gap-1 rounded-lg border border-line-strong px-2.5 py-2 text-xs text-ink-2 hover:bg-surface-2"
+            >
+              <X size={13} /> <span className="hidden sm:inline">Șterge filtre</span> ({activeCount})
+            </button>
+          )}
+          <button
+            onClick={() => setExpanded((v) => !v)}
+            className="flex shrink-0 items-center gap-1 rounded-lg border border-line-strong px-2.5 py-2 text-xs text-ink-2 hover:bg-surface-2 md:hidden"
+          >
+            <SlidersHorizontal size={13} /> Filtre {activeCount > 0 && `(${activeCount})`}
+            <ChevronDown size={13} className={clsx("transition-transform", expanded && "rotate-180")} />
           </button>
-        )}
+          {resultCount !== undefined && (
+            <span className="shrink-0 text-xs text-ink-3 font-variant-tabular md:hidden">
+              {resultCount} {resultCount === 1 ? "rezultat" : "rezultate"}
+            </span>
+          )}
+        </div>
       </div>
 
+      <div className={clsx("flex-col gap-3", expanded ? "flex" : "hidden md:flex")}>
       <div className="flex flex-wrap items-center gap-2">
-        <SlidersHorizontal size={14} className="text-ink-3" />
+        <SlidersHorizontal size={14} className="hidden text-ink-3 md:block" />
         <select
           value={filters.categoryId ?? ""}
           onChange={(e) => set("categoryId", e.target.value || undefined)}
@@ -144,7 +165,7 @@ export function FilterBar({
         <Toggle active={!!filters.stale} onClick={() => set("stale", !filters.stale || undefined)}>De revizuit</Toggle>
 
         {resultCount !== undefined && (
-          <span className="ml-auto text-xs text-ink-3 font-variant-tabular">{resultCount} {resultCount === 1 ? "rezultat" : "rezultate"}</span>
+          <span className="ml-auto hidden text-xs text-ink-3 font-variant-tabular md:inline">{resultCount} {resultCount === 1 ? "rezultat" : "rezultate"}</span>
         )}
       </div>
 
@@ -155,6 +176,7 @@ export function FilterBar({
           ))}
         </div>
       )}
+      </div>
     </div>
   );
 }

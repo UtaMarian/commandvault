@@ -31,7 +31,7 @@ export function DashboardPage() {
   const reviewTotal = data.destructiveWithoutRollback.length + data.staleEntries.length;
 
   return (
-    <div className="mx-auto max-w-5xl px-6 py-6">
+    <div className="mx-auto h-full max-w-5xl overflow-y-auto px-4 py-6 sm:px-6">
       <h1 className="text-xl font-semibold text-ink">Sumar</h1>
       <p className="mt-0.5 text-sm text-ink-2">Ce ai în vault, ce lipsește și ce merită revizuit.</p>
 
